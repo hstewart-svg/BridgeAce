@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bridge Ace">
+    <title>Bridge Ace - Your Bidding Trainer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f4c3a 0%, #1a6b4f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .menu-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+                .section-header {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin: 25px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #d4af37;
+            font-weight: 600;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 5px;
+        }
+
+        .topic-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #2d7a5f 0%, #1f5a42 100%);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .topic-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .topic-button:active {
+            transform: translateY(0);
+        }
+
+        .hand-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .suit-line {
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+
+        .suit-symbol {
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .spades { color: #000; }
+        .hearts { color: #d32f2f; }
+        .diamonds { color: #d32f2f; }
+        .clubs { color: #000; }
+
+        .question {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 20px 0;
+            color: #2c3e50;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .option-button {
+            padding: 15px 20px;
+            font-size: 1.1em;
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            -webkit-tap-highlight-color: rgba(45, 122, 95, 0.3);
+            touch-action: manipulation;
+        }
+
+        .option-button:hover {
+            background: #d5dbdb;
+            border-color: #95a5a6;
+        }
+
+        .option-button.selected {
+            background: #2d7a5f;
+            color: white;
+            border-color: #1f5a42;
+        }
+
+        .option-button.correct {
+            background: #27ae60;
+            color: white;
+            border-color: #229954;
+        }
+
+        .option-button.incorrect {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+
+        .explanation {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2d7a5f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1f5a42;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #7f8c8d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .score.good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .score.ok {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score.needs-practice {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .back-button:hover {
+            background: #7f8c8d;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .menu-container, .quiz-container {
+                padding: 20px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .topic-button {
+                padding: 22px;
+                font-size: 1.15em;
+                margin: 12px 0;
+            }
+
+            .option-button {
+                padding: 18px 20px;
+                font-size: 1.15em;
+                min-height: 60px;
+            }
+
+            .btn {
+                padding: 18px;
+                font-size: 1.2em;
+                min-height: 60px;
+            }
+
+            .hand-display {
+                font-size: 0.95em;
+            }
+
+            .question {
+                font-size: 1.15em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bridge Ace</h1>
+            <p>Practice Smart, Play Better</p>
+            <div style="font-size: 2em; margin-top: 10px; opacity: 0.9;"><span style="color: #000;">♠</span> <span style="color: #d32f2f;">♥</span> <span style="color: #d32f2f;">♦</span> <span style="color: #000;">♣</span></div>
+        </div>
+
+        <div class="menu-container" id="menuContainer">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">Choose a Topic</h2>
+            
+            <div class="section-header">Basics</div>
+            <button class="topic-button" onclick="startQuiz('handEvaluation')">Hand Evaluation</button>
+            <button class="topic-button" onclick="startQuiz('openingBids')">Opening Bids</button>
+            
+            <div class="section-header">No Trump Bidding</div>
+            <button class="topic-button" onclick="startQuiz('responding1NT')">Responding to 1NT</button>
+            <button class="topic-button" onclick="startQuiz('staymanTransfers')">Stayman & Transfers</button>
+            <button class="topic-button" onclick="startQuiz('jacoby2NT')">Jacoby 2NT</button>
+            
+            <div class="section-header">Suit Bidding</div>
+            <button class="topic-button" onclick="startQuiz('respondingSuit')">Responding to Suit Opens</button>
+            <button class="topic-button" onclick="startQuiz('strengthShowing')">Strength-Showing Rebids</button>
+            <button class="topic-button" onclick="startQuiz('strong2Club')">Strong 2♣ Open</button>
+            
+            <div class="section-header">Competitive Bidding</div>
+            <button class="topic-button" onclick="startQuiz('competitive')">Overcalls & Cue Bids</button>
+            <button class="topic-button" onclick="startQuiz('doubles')">Takeout & Negative Doubles</button>
+            
+            <div class="section-header">Card Play & Defense</div>
+            <button class="topic-button" onclick="startQuiz('finesse')">Finesse Technique</button>
+            <button class="topic-button" onclick="startQuiz('declarerPlay')">Declarer Play Strategy</button>
+            <button class="topic-button" onclick="startQuiz('defensiveSignals')">Defensive Signals & Attitude</button>
+            
+            <div class="section-header">Advanced</div>
+            <button class="topic-button" onclick="startQuiz('slamBidding')">Slam Bidding Basics</button>
+            <button class="topic-button" onclick="startQuiz('blackwoodGerber')">Blackwood & Gerber</button>
+            <button class="topic-button" onclick="startQuiz('cueBidding')">Cue Bidding</button>
+            <button class="topic-button" onclick="startQuiz('rkc1430')">RKC 1430 (Blackwood)</button>
+            <button class="topic-button" onclick="startQuiz('preempts')">Pre-emptive Bids</button>
+            <button class="topic-button" onclick="startQuiz('partnershipStrength')">Partnership Strength</button>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <button class="back-button" onclick="backToMenu()">← Back to Topics</button>
+            
+            <div class="progress" id="progress"></div>
+            
+            <div id="quizContent"></div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()">Submit Answer</button>
+                <button class="btn btn-secondary" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+            </div>
+
+            <div id="finalScore" style="display: none;">
+                <div id="trophyDisplay" style="text-align: center; font-size: 4em; margin: 20px 0;"></div>
+                <div class="score" id="scoreDisplay"></div>
+                <div id="bridgePhrase" style="text-align: center; font-style: italic; color: #7f8c8d; margin: 15px 0; font-size: 1.1em;"></div>
+                <button class="btn btn-primary" onclick="restartQuiz()" style="width: 100%; margin-top: 10px;">Try Again</button>
+                <button class="btn btn-secondary" onclick="backToMenu()" style="width: 100%; margin-top: 10px;">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            handEvaluation: [
+                {
+                    hand: {
+                        spades: 'KQ',
+                        hearts: 'A10765',
+                        diamonds: 'KJ965',
+                        clubs: 'J'
+                    },
+                    question: "How many points is this hand worth?",
+                    options: ['12 points', '13 points', '14 points', '15 points'],
+                    correct: 2,
+                    explanation: "HCP: K(3) + Q(2) + A(4) + K(3) + J(1) + J(1) = 14 HCP. No distribution points needed since no suit has more than 4 cards."
+                },
+                {
+                    hand: {
+                        spades: 'AK543',
+                        hearts: 'Q87',
+                        diamonds: '6',
+                        clubs: 'K1092'
+                    },
+                    question: 'How many points is this hand worth?',
+                    options: ['13 points', '14 points', '15 points', '16 points'],
+                    correct: 1,
+                    explanation: 'HCP: A(4) + K(3) + Q(2) + K(3) = 12 HCP. Distribution: Spades has 5 cards (+1 point), Diamonds is a singleton (+2 points). Total = 12 + 1 + 2 = 15 points. Note: Add 1 point for every card beyond the first four in a suit.'
+                },
+                {
+                    hand: {
+                        spades: 'AK6',
+                        hearts: 'AK103',
+                        diamonds: 'Q32',
+                        clubs: '943'
+                    },
+                    question: 'How many points is this hand worth?',
+                    options: ['15 points', '16 points', '17 points', '18 points'],
+                    correct: 1,
+                    explanation: 'HCP: A(4) + K(3) + A(4) + K(3) + Q(2) = 16 HCP. No distribution points (no suit longer than 4 cards). Total = 16 points.'
+                },
+                {
+                    hand: {
+                        spades: 'AKQJ',
+                        hearts: 'Q104',
+                        diamonds: 'AK62',
+                        clubs: 'J10'
+                    },
+                    question: 'How many points is this hand worth?',
+                    options: ['20 points', '21 points', '22 points', '23 points'],
+                    correct: 1,
+                    explanation: 'HCP: A(4) + K(3) + Q(2) + J(1) + Q(2) + A(4) + K(3) + J(1) + J(1) = 21 HCP. No distribution points. Total = 21 points.'
+                },
+                {
+                    hand: {
+                        spades: 'Q872',
+                        hearts: '652',
+                        diamonds: 'AK6',
+                        clubs: 'J109'
+                    },
+                    question: 'How many points is this hand worth?',
+                    options: ['8 points', '9 points', '10 points', '11 points'],
+                    correct: 1,
+                    explanation: 'HCP: Q(2) + A(4) + K(3) = 9 HCP. J(1) in clubs. Total HCP = 10. No distribution points. Total = 10 points.'
+                }
+            ],
+            openingBids: [
+                {
+                    hand: {
+                        spades: 'KQ4',
+                        hearts: 'AJ7',
+                        diamonds: 'K863',
+                        clubs: 'Q92'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♣', '1♦', '1NT', 'Pass'],
+                    correct: 2,
+                    explanation: 'You have 16 HCP (K+Q+A+J+K+Q = 3+2+4+1+3+2). With 15-17 HCP and a flat hand (no 5-card suit or singleton), open 1NT.'
+                },
+                {
+                    hand: {
+                        spades: 'AK876',
+                        hearts: 'Q54',
+                        diamonds: 'K3',
+                        clubs: 'A82'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♠', '1NT', '2♠', 'Pass'],
+                    correct: 0,
+                    explanation: 'You have 16 HCP with a 5-card spade suit. Open 1♠. Even though you have 15-17 HCP, you have a 5-card major, so open the suit instead of 1NT.'
+                },
+                {
+                    hand: {
+                        spades: 'Q8',
+                        hearts: 'AKQ7',
+                        diamonds: 'KJ104',
+                        clubs: 'A93'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♦', '1♥', '1NT', '2NT'],
+                    correct: 3,
+                    explanation: 'You have 20 HCP (Q+A+K+Q+K+J+A = 2+4+3+2+3+1+4). With 20-21 HCP and a flat hand (no 5-card suit), open 2NT.'
+                },
+                {
+                    hand: {
+                        spades: 'K4',
+                        hearts: 'AJ86',
+                        diamonds: 'AQ973',
+                        clubs: 'K2'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♦', '1♥', '1NT', '2NT'],
+                    correct: 0,
+                    explanation: 'You have 18 HCP. With 18-19 HCP and a flat hand, open 1 of a minor and plan to jump to 2NT. Since diamonds is longer, open 1♦.'
+                },
+                {
+                    hand: {
+                        spades: 'AJ876',
+                        hearts: 'KQ1043',
+                        diamonds: 'A',
+                        clubs: '52'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♠', '1♥', '2♣', 'Pass'],
+                    correct: 0,
+                    explanation: 'You have 14 HCP + 1 for 5 spades + 1 for 5 hearts + 2 for singleton = 18 points. With two 5-card suits, open the higher-ranking suit first. Open 1♠.'
+                }
+            ],
+            responding1NT: [
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'Q8642',
+                        hearts: 'K73',
+                        diamonds: '952',
+                        clubs: 'J4'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['Pass', '2♣ (Stayman)', '2♦ (Transfer to hearts)', '2♥ (Transfer to spades)'],
+                    correct: 3,
+                    explanation: 'You have 6 HCP and a 5-card spade suit. With 8-9 HCP and a 5-card major, transfer to your major then bid 2NT (inviting). With less (6-7), transfer and pass. Bid 2♥ (transfer to spades), planning to pass 2♠.'
+                },
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'KJ84',
+                        hearts: 'Q1063',
+                        diamonds: 'A52',
+                        clubs: '73'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['Pass', '2♣ (Stayman)', '2NT', '3NT'],
+                    correct: 1,
+                    explanation: 'You have 10 HCP with 4 cards in each major. Use Stayman (2♣) to find a 4-4 major fit. If partner bids 2♥ or 2♠, raise to game. If partner bids 2♦ (no major), bid 3NT.'
+                },
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'Q73',
+                        hearts: 'J82',
+                        diamonds: 'K964',
+                        clubs: '1053'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['Pass', '2♣ (Stayman)', '2NT', '3NT'],
+                    correct: 2,
+                    explanation: 'You have 8 HCP with no 4-card major. Bid 2NT to invite game. Partner will pass with 15 HCP, bid 3NT with 17 HCP, or bid 3NT with a good 16 HCP.'
+                },
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'A8',
+                        hearts: 'KQ10742',
+                        diamonds: '83',
+                        clubs: 'J95'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['2♥ (Transfer)', '3♥', '4♥', '2♦ (Transfer) then 4♥'],
+                    correct: 3,
+                    explanation: 'You have 10 HCP with a 6-card heart suit. Transfer with 2♦, then bid 4♥ to show 6 hearts and game-forcing values.'
+                },
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'Q1065',
+                        hearts: 'K974',
+                        diamonds: 'A83',
+                        clubs: '42'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['Pass', '2♣ (Stayman)', '2NT', '3NT'],
+                    correct: 1,
+                    explanation: 'You have 11 HCP with 4 cards in each major. Bid 2♣ (Stayman). If partner shows a major, raise to 4 of that suit. If partner bids 2♦, bid 3NT showing 4 of the other major and game-forcing values.'
+                }
+            ],
+            respondingSuit: [
+                {
+                    partnerBid: '1♥',
+                    hand: {
+                        spades: 'K76',
+                        hearts: '653',
+                        diamonds: 'Q953',
+                        clubs: 'K762'
+                    },
+                    question: 'Partner opened 1♥. What is your response?',
+                    options: ['Pass', '1NT', '2♣', '2♥'],
+                    correct: 3,
+                    explanation: 'You have 8 HCP with 3-card heart support. Always raise partner\'s major with 3+ card support. With 6-9 points and 3-4 hearts, bid 2♥.'
+                },
+                {
+                    partnerBid: '1♣',
+                    hand: {
+                        spades: 'KJ752',
+                        hearts: '762',
+                        diamonds: 'A986',
+                        clubs: '4'
+                    },
+                    question: 'Partner opened 1♣. What is your response?',
+                    options: ['1♠', '1♦', '1NT', '2♣'],
+                    correct: 0,
+                    explanation: 'You have 8 HCP with a 5-card spade suit. Over a minor, always show a 4+ card major at the 1-level. Bid 1♠.'
+                },
+                {
+                    partnerBid: '1♦',
+                    hand: {
+                        spades: 'KJ7',
+                        hearts: '653',
+                        diamonds: 'A8',
+                        clubs: 'QJ853'
+                    },
+                    question: 'Partner opened 1♦. What is your response?',
+                    options: ['1NT', '2♣', '2♦', '3♣'],
+                    correct: 1,
+                    explanation: 'You have 11 HCP with 5 clubs and no 4-card major. Bid 2♣. This shows 9+ points and 5+ clubs (or 10+ points and 4 clubs), denying a 4-card major.'
+                },
+                {
+                    partnerBid: '1♠',
+                    hand: {
+                        spades: '96',
+                        hearts: 'AK952',
+                        diamonds: 'QJ7',
+                        clubs: '862'
+                    },
+                    question: 'Partner opened 1♠. What is your response?',
+                    options: ['1NT', '2♣', '2♥', 'Pass'],
+                    correct: 2,
+                    explanation: 'You have 10 HCP with a 5-card heart suit. Over 1♠, bid 2♥ showing 9+ points and a 5-card heart suit.'
+                },
+                {
+                    partnerBid: '1♥',
+                    hand: {
+                        spades: '9',
+                        hearts: 'K10763',
+                        diamonds: 'KQ92',
+                        clubs: '872'
+                    },
+                    question: 'Partner opened 1♥. What is your response?',
+                    options: ['2♥', '3♥', '4♥', 'Pass'],
+                    correct: 2,
+                    explanation: 'You have 8 HCP + 2 for singleton spade + 1 for 5th heart = 11 points, with 5-card heart support. This is a pre-emptive 4♥ bid (7-9 points with 5-card support and a singleton/void). Actually with 11 points this is borderline - could also bid 3♥ (limit raise showing 10-12).'
+                },
+                {
+                    partnerBid: '1♣',
+                    hand: {
+                        spades: 'KJ73',
+                        hearts: 'A964',
+                        diamonds: '107',
+                        clubs: '743'
+                    },
+                    question: 'Partner opened 1♣. What is your response?',
+                    options: ['1♦', '1♥', '1♠', '1NT'],
+                    correct: 1,
+                    explanation: 'You have 8 HCP with two 4-card majors. With two 4-card suits, bid the lower ranking first. Bid 1♥.'
+                },
+                {
+                    partnerBid: '1♦',
+                    hand: {
+                        spades: '4',
+                        hearts: 'A109743',
+                        diamonds: 'AQ8',
+                        clubs: 'A74'
+                    },
+                    question: 'Partner opened 1♦. What is your response?',
+                    options: ['1♥', '2♥', '3♥', '4♥'],
+                    correct: 0,
+                    explanation: 'You have 14 HCP with a 6-card heart suit, but the suit is not solid enough for a jump shift (which requires 16+ points). Bid 1♥ and show extra strength later.'
+                }
+            ],
+            competitive: [
+                {
+                    auction: 'Partner opened 1♦ - RHO overcalled 1♠',
+                    hand: {
+                        spades: '73',
+                        hearts: 'KJ84',
+                        diamonds: 'Q1063',
+                        clubs: 'A52'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', 'Double (Negative)', '1NT', '2♦'],
+                    correct: 1,
+                    explanation: 'You have 10 HCP with 4 hearts. After partner opens a minor and RHO overcalls a major, a double shows 8+ HCP and 4 of the other major. Make a negative double to show your 4-card heart suit.'
+                },
+                {
+                    auction: 'Partner opened 1♥ - RHO overcalled 2♣',
+                    hand: {
+                        spades: 'Q73',
+                        hearts: 'K86',
+                        diamonds: 'J1042',
+                        clubs: 'A95'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '2♦', '2♥', '3♣ (cue bid)'],
+                    correct: 3,
+                    explanation: 'You have 10 HCP with 3-card heart support. After an overcall, bidding the opponent\'s suit (cue bid) shows a limit raise or better (10+ HCP and 3+ card support). Bid 3♣.'
+                },
+                {
+                    auction: 'Partner opened 1♦ - RHO overcalled 1♥',
+                    hand: {
+                        spades: 'AJ876',
+                        hearts: '43',
+                        diamonds: 'K5',
+                        clubs: '10742'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '1♠', '2♠', 'Double'],
+                    correct: 1,
+                    explanation: 'You have 8 HCP with a 5-card spade suit. With 8+ HCP and a 5-card major, bid your major at the 1-level if available. Bid 1♠.'
+                },
+                {
+                    auction: 'Partner opened 1♣ - RHO overcalled 1♠',
+                    hand: {
+                        spades: 'Q8',
+                        hearts: 'A73',
+                        diamonds: 'KJ94',
+                        clubs: '10652'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '1NT', '2♣', 'Double'],
+                    correct: 1,
+                    explanation: 'You have 10 HCP with a stopper in spades (opponent\'s suit). With 6-9 HCP and a stopper, bid 1NT. With 10-12 HCP and a stopper, bid 2NT (even if a jump). Since you have exactly 10 HCP, 1NT is appropriate.'
+                },
+                {
+                    auction: 'Partner opened 1♥ - RHO overcalled 1♠',
+                    hand: {
+                        spades: '74',
+                        hearts: 'Q1063',
+                        diamonds: 'K84',
+                        clubs: 'A975'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '2♥', '2♠ (cue bid)', '1NT'],
+                    correct: 2,
+                    explanation: 'You have 10 HCP with 4-card heart support. After an overcall, bid the opponent\'s suit to show a limit raise or better. Bid 2♠ (cue bid) showing 10+ HCP and 4+ hearts.'
+                }
+            ],
+            jacoby2NT: [
+                {
+                    auction: 'Partner opened 1♠ - You bid 2NT (Jacoby)',
+                    hand: {
+                        spades: 'AQ75',
+                        hearts: 'K1063',
+                        diamonds: 'A84',
+                        clubs: '52'
+                    },
+                    partnerRebid: '3♣',
+                    question: 'Partner rebid 3♣ (showing singleton or void). What do you bid?',
+                    options: ['3♠', '4♣ (cue bid)', '4♠', '4NT (Blackwood)'],
+                    correct: 1,
+                    explanation: 'Partner showed a club shortage. You have good controls (2 aces and a king) and 4-card trump support. Cue bid 4♣ to show your club ace and explore slam.'
+                },
+                {
+                    auction: 'Partner opened 1♥ - You bid 2NT (Jacoby)',
+                    hand: {
+                        spades: 'K73',
+                        hearts: 'AQ86',
+                        diamonds: 'Q1042',
+                        clubs: 'K5'
+                    },
+                    partnerRebid: '3NT',
+                    question: 'Partner rebid 3NT (showing 14-15 HCP, no shortage). What do you bid?',
+                    options: ['Pass', '4♥', '4NT', '6♥'],
+                    correct: 1,
+                    explanation: 'You have 14 HCP and partner has 14-15 HCP. That\'s 28-29 combined, not quite enough for slam (usually need 33+). Bid 4♥ to play game.'
+                },
+                {
+                    auction: 'Partner opened 1♠ - You bid 2NT (Jacoby)',
+                    hand: {
+                        spades: 'KJ84',
+                        hearts: '7',
+                        diamonds: 'AK1063',
+                        clubs: 'Q94'
+                    },
+                    partnerRebid: '4♦',
+                    question: 'Partner rebid 4♦ (showing 13+ HCP and 5+ diamonds). What do you bid?',
+                    options: ['4♠', '4NT (Blackwood)', '5♦', '6♠'],
+                    correct: 1,
+                    explanation: 'Partner showed extra length in diamonds - you have a double fit! You have 14 HCP + good diamond support. Check for key cards with 4NT (Blackwood).'
+                },
+                {
+                    auction: 'Partner opened 1♥ - You bid 2NT (Jacoby)',
+                    hand: {
+                        spades: 'A8',
+                        hearts: 'K1074',
+                        diamonds: 'QJ3',
+                        clubs: 'Q1052'
+                    },
+                    partnerRebid: '3♥',
+                    question: 'Partner rebid 3♥ (showing 16+ HCP, no shortage). What do you bid?',
+                    options: ['4♥', '4♣ (cue bid)', '4NT', 'Pass'],
+                    correct: 1,
+                    explanation: 'Partner has 16+ HCP and you have 12 HCP = 28+ combined. Slam is possible. Start cue bidding with 4♣ to show your ace.'
+                },
+                {
+                    auction: 'Partner opened 1♠ - You bid 2NT (Jacoby)',
+                    hand: {
+                        spades: 'Q1063',
+                        hearts: 'AJ7',
+                        diamonds: 'K842',
+                        clubs: '95'
+                    },
+                    partnerRebid: '4♠',
+                    question: 'Partner rebid 4♠ (showing 12-13 HCP, minimum opening). What do you bid?',
+                    options: ['Pass', '4NT', '5♠', '6♠'],
+                    correct: 0,
+                    explanation: 'Partner showed a minimum opening (12-13 HCP). You have 11 HCP. 23-24 combined is not enough for slam. Pass and play 4♠.'
+                }
+            ],
+            preempts: [
+                {
+                    hand: {
+                        spades: 'KQJ10874',
+                        hearts: '6',
+                        diamonds: '943',
+                        clubs: '72'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♠', '2♠', '3♠', '4♠'],
+                    correct: 2,
+                    explanation: 'You have 7 HCP with a 7-card spade suit and 2+ honors. With 7 cards, open a weak 3♠ to take away bidding space from opponents.'
+                },
+                {
+                    hand: {
+                        spades: '8',
+                        hearts: 'KJ10743',
+                        diamonds: 'Q96',
+                        clubs: 'A82'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♥', '2♥', '3♥', 'Pass'],
+                    correct: 1,
+                    explanation: 'You have 9 HCP with a 6-card heart suit and 2+ honors (K, J, 10 are all honors). Open a weak 2♥.'
+                },
+                {
+                    auction: 'Partner opened 2♥ (weak 2)',
+                    hand: {
+                        spades: 'AK7',
+                        hearts: 'Q82',
+                        diamonds: 'AK63',
+                        clubs: 'K104'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '2NT', '3♥', '4♥'],
+                    correct: 3,
+                    explanation: 'Partner has 6 hearts and 6-10 HCP. Use the Rule of 17: Add your HCP (19) + your trump count (3) = 22. Since 22 > 17, bid 4♥.'
+                },
+                {
+                    auction: 'Partner opened 2♠ (weak 2)',
+                    hand: {
+                        spades: 'K73',
+                        hearts: 'AQ8',
+                        diamonds: 'AKJ4',
+                        clubs: 'Q62'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '2NT', '3♠', '4♠'],
+                    correct: 1,
+                    explanation: 'You have 18 HCP with stoppers in all three side suits. Bid 2NT asking partner to show an outside ace or king if he has one. This will help you decide between 3NT and 4♠.'
+                },
+                {
+                    auction: 'Partner opened 3♦ (weak 3)',
+                    hand: {
+                        spades: 'AQ7',
+                        hearts: 'KJ3',
+                        diamonds: 'K5',
+                        clubs: 'AQ1082'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '3NT', '5♦', '4♣'],
+                    correct: 1,
+                    explanation: 'You have 18 HCP with stoppers in all three outside suits and 2 diamonds. Partner has 7 diamonds and 5-10 HCP. Bid 3NT to play in notrump.'
+                },
+                {
+                    hand: {
+                        spades: 'QJ109876',
+                        hearts: '5',
+                        diamonds: 'J1043',
+                        clubs: '8'
+                    },
+                    question: 'What should you open with this hand?',
+                    options: ['1♠', '3♠', '4♠', 'Pass'],
+                    correct: 2,
+                    explanation: 'You have 4 HCP with an 8-card spade suit and one honor (barely - but J, 10, 9 count). With 8 cards and less than 10 HCP, open a weak 4♠.'
+                }
+            ],
+            staymanTransfers: [
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'KJ84',
+                        hearts: 'Q1063',
+                        diamonds: 'A52',
+                        clubs: '73'
+                    },
+                    question: 'Partner opened 1NT (15-17). What is your response?',
+                    options: ['Pass', '2♣ (Stayman)', '2♦ (Transfer)', '2NT'],
+                    correct: 1,
+                    explanation: 'You have 10 HCP with 4 cards in both majors. Use Stayman (2♣) to ask if partner has a 4-card major. If partner shows your major, raise to game. If partner bids 2♦ (no major), bid 3NT.'
+                },
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: 'Q86542',
+                        hearts: '73',
+                        diamonds: 'K4',
+                        clubs: '952'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['Pass', '2♠', '2♥ (Transfer to spades)', '2NT'],
+                    correct: 2,
+                    explanation: 'You have 6 HCP with a 6-card spade suit. Transfer with 2♥ (transfer to spades). Partner will bid 2♠, and you will pass. Transfers allow the stronger hand (opener) to be declarer.'
+                },
+                {
+                    partnerBid: '1NT',
+                    auction: 'You bid 2♦ (transfer to hearts) - Partner bid 2♥',
+                    hand: {
+                        spades: 'K7',
+                        hearts: 'QJ9743',
+                        diamonds: 'A82',
+                        clubs: '64'
+                    },
+                    question: 'What is your rebid?',
+                    options: ['Pass', '2NT', '3♥', '4♥'],
+                    correct: 2,
+                    explanation: 'You have 9 HCP with a 6-card heart suit. After transferring, bid 3♥ to show 6 hearts and invite game (8-9 points). Partner will pass with a minimum or bid 4♥ with a maximum.'
+                },
+                {
+                    partnerBid: '1NT',
+                    auction: 'You bid 2♣ (Stayman) - Partner bid 2♠',
+                    hand: {
+                        spades: 'AQ73',
+                        hearts: 'K1064',
+                        diamonds: '85',
+                        clubs: 'Q92'
+                    },
+                    question: 'What is your rebid?',
+                    options: ['Pass', '2NT', '3♠', '4♠'],
+                    correct: 3,
+                    explanation: 'You have 12 HCP and partner showed 4 spades. You found your 4-4 fit! Bid 4♠ to reach game in the major.'
+                },
+                {
+                    partnerBid: '2NT',
+                    hand: {
+                        spades: 'Q87643',
+                        hearts: 'J5',
+                        diamonds: '1062',
+                        clubs: '84'
+                    },
+                    question: 'Partner opened 2NT (20-21). What is your response?',
+                    options: ['Pass', '3♥ (Transfer)', '4♥ (Texas Transfer)', '3NT'],
+                    correct: 1,
+                    explanation: 'You have 3 HCP with a 6-card spade suit. Transfer with 3♥ (asking partner to bid 3♠), then pass. Even with very few points, it\'s better to play in your 6-card suit.'
+                },
+                {
+                    partnerBid: '1NT',
+                    hand: {
+                        spades: '73',
+                        hearts: 'AKJ10742',
+                        diamonds: 'K6',
+                        clubs: '95'
+                    },
+                    question: 'Partner opened 1NT. What is your response?',
+                    options: ['2♦ (Transfer)', '3♥', '4♦ (Texas Transfer)', '4♥'],
+                    correct: 2,
+                    explanation: 'You have 14 HCP with a 7-card heart suit. Use a Texas Transfer (4♦) asking partner to bid 4♥. This gets you directly to game and makes partner the declarer.'
+                },
+                {
+                    partnerBid: '1NT',
+                    auction: 'You bid 2♣ (Stayman) - Partner bid 2♦ (no major)',
+                    hand: {
+                        spades: 'KQ84',
+                        hearts: 'A1073',
+                        diamonds: '92',
+                        clubs: 'K65'
+                    },
+                    question: 'What is your rebid?',
+                    options: ['Pass', '2NT', '3NT', '3♥'],
+                    correct: 2,
+                    explanation: 'You have 13 HCP. Partner denied a 4-card major. Bid 3NT to play game in notrump.'
+                }
+            ],
+            doubles: [
+                {
+                    auction: 'RHO opened 1♥',
+                    hand: {
+                        spades: 'AQ84',
+                        hearts: '7',
+                        diamonds: 'KJ93',
+                        clubs: 'K1052'
+                    },
+                    question: 'What should you bid?',
+                    options: ['Pass', 'Double', '1♠', '1NT'],
+                    correct: 1,
+                    explanation: 'You have 14 HCP with support for all unbid suits (3+ cards in spades, diamonds, and clubs). Make a takeout double showing opening strength and support for unbid suits.'
+                },
+                {
+                    auction: 'Partner opened 1♦ - RHO overcalled 1♠',
+                    hand: {
+                        spades: '73',
+                        hearts: 'KJ84',
+                        diamonds: 'Q1063',
+                        clubs: 'A52'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', 'Double', '2♥', '1NT'],
+                    correct: 1,
+                    explanation: 'You have 10 HCP with exactly 4 hearts. After partner opens a minor and RHO overcalls a major, a negative double shows 8+ HCP and exactly 4 of the other major (NOT 5). With 5+ hearts, bid 2♥.'
+                },
+                {
+                    auction: 'Partner doubled 1♠ (takeout)',
+                    hand: {
+                        spades: '86',
+                        hearts: 'Q10743',
+                        diamonds: 'J92',
+                        clubs: '1054'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '2♥', '3♥', '1NT'],
+                    correct: 1,
+                    explanation: 'You have 3 HCP. After a takeout double, you MUST bid (unless you have the rare Rule of 9). With 0-8 HCP, bid your longest suit at the lowest level. Bid 2♥.'
+                },
+                {
+                    auction: 'Partner doubled 1♦ (takeout)',
+                    hand: {
+                        spades: 'KQ10742',
+                        hearts: 'A83',
+                        diamonds: '74',
+                        clubs: 'Q6'
+                    },
+                    question: 'What is your response?',
+                    options: ['2♠', '3♠', '4♠', '2♣'],
+                    correct: 2,
+                    explanation: 'You have 11 HCP with a 6-card spade suit. With 9-11 HCP and a 5-card major, jump in your major. Jump to 3♠.'
+                },
+                {
+                    auction: 'Partner doubled 1♣ (takeout)',
+                    hand: {
+                        spades: 'AKJ74',
+                        hearts: 'KQ83',
+                        diamonds: '95',
+                        clubs: '72'
+                    },
+                    question: 'What is your response?',
+                    options: ['1♠', '4♠', '2♣ (cue bid)', '1NT'],
+                    correct: 1,
+                    explanation: 'You have 14 HCP with a 5-card spade suit. With 12+ HCP and a 5-card major, jump to GAME. Bid 4♠.'
+                },
+                {
+                    auction: 'Partner doubled 1♥ (takeout)',
+                    hand: {
+                        spades: 'Q73',
+                        hearts: 'KJ104',
+                        diamonds: 'A92',
+                        clubs: '863'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', '1♠', '1NT', '2NT'],
+                    correct: 2,
+                    explanation: 'You have 10 HCP with a stopper in hearts (KJ10x) and no 5-card major. With 8-10 HCP and a stopper in the bid suit, bid 1NT.'
+                },
+                {
+                    auction: 'Partner doubled 1♠ (takeout)',
+                    hand: {
+                        spades: 'J109876',
+                        hearts: '72',
+                        diamonds: 'K84',
+                        clubs: '63'
+                    },
+                    question: 'What is your response? (Calculate: 1 level + 6 spades + 3 honors)',
+                    options: ['Pass (Rule of 9)', '2♣', '2♦', '2♥'],
+                    correct: 0,
+                    explanation: 'Rule of 9: Bid level (1) + cards in doubled suit (6) + honors in that suit (3) = 10, which is >= 9. You can PASS and try to set 1♠ doubled. This is rare but valid here.'
+                },
+                {
+                    auction: 'Partner opened 1♣ - RHO overcalled 1♥',
+                    hand: {
+                        spades: 'KQ84',
+                        hearts: '73',
+                        diamonds: 'A1063',
+                        clubs: '952'
+                    },
+                    question: 'What is your response?',
+                    options: ['Pass', 'Double', '1♠', '2♦'],
+                    correct: 2,
+                    explanation: 'You have 9 HCP with exactly 4 spades. A negative double shows exactly 4 of the other major, but since you can bid 1♠ at the one-level, just bid it! Reserve the double for when you can\'t bid your major at the one-level.'
+                }
+            ],
+            rkc1430: [
+                {
+                    auction: 'Spades are trump - Partner bid 4NT (RKC)',
+                    hand: {
+                        spades: 'KQ1074',
+                        hearts: 'A83',
+                        diamonds: 'AK6',
+                        clubs: '72'
+                    },
+                    question: 'What is your response? (Count: 4 aces + K♠)',
+                    options: ['5♣ (1 or 4)', '5♦ (0 or 3)', '5♥ (2 without Q)', '5♠ (2 with Q)'],
+                    correct: 0,
+                    explanation: 'You have 2 aces (♥A, ♦A) and the king of trump (♠K) = 3 key cards. But wait - you DON\'T have the king of spades, only KQ. Actually, with A♥, A♦, and K♠ that\'s 3 key cards. Bid 5♦ (0 or 3). Actually reviewing: you have K♠ + A♥ + A♦ = 3 key cards. Answer is 5♦.'
+                },
+                {
+                    auction: 'Hearts are trump - Partner bid 4NT (RKC)',
+                    hand: {
+                        spades: 'A8',
+                        hearts: 'KQ10742',
+                        diamonds: 'K6',
+                        clubs: 'A95'
+                    },
+                    question: 'What is your response?',
+                    options: ['5♣ (1 or 4)', '5♦ (0 or 3)', '5♥ (2 without Q)', '5♠ (2 with Q)'],
+                    correct: 3,
+                    explanation: 'You have 2 aces (♠A, ♣A), the king of trump (♥K), and the queen of trump (♥Q) = 2 key cards WITH the queen. Bid 5♠ (2 key cards with Q of trump).'
+                },
+                {
+                    auction: 'Spades are trump - You bid 4NT - Partner bid 5♣ (1 or 4 KC)',
+                    hand: {
+                        spades: 'AQ10742',
+                        hearts: 'AK3',
+                        diamonds: 'A6',
+                        clubs: '72'
+                    },
+                    question: 'What is your rebid to ask about the Queen of trump?',
+                    options: ['5♦', '5♥', '5♠', 'Pass'],
+                    correct: 0,
+                    explanation: 'Partner has 1 or 4 key cards. You have 3 aces + K♠ (if partner has it) would be all 5. To ask about the queen of trump, bid the lowest available suit outside of trump. Bid 5♦ asking "Do you have the Q♠?"'
+                },
+                {
+                    auction: 'Hearts are trump - You bid 4NT - Partner bid 5♦ (0 or 3) - You bid 5♥ (queen ask) - Partner bid 5♠',
+                    hand: {
+                        spades: 'K6',
+                        hearts: 'AKJ1074',
+                        diamonds: 'A8',
+                        clubs: 'AQ3'
+                    },
+                    question: 'What does partner\'s 5♠ bid mean?',
+                    options: ['No Q♥', 'Q♥ but no outside K', 'Q♥ and K♠', 'Q♥ and K♠, might have K♦/K♣'],
+                    correct: 3,
+                    explanation: 'After you ask for the queen, partner\'s bid of 5♠ shows: "I have the Q♥ and the K♠, and I MIGHT have K♦ and/or K♣." The lowest suit bid shows that king, and partner may have higher kings too.'
+                },
+                {
+                    auction: 'Spades are trump - You bid 4NT - Partner bid 5♥ (2 without Q)',
+                    hand: {
+                        spades: 'AKJ1074',
+                        hearts: 'K6',
+                        diamonds: 'AQ',
+                        clubs: 'A83'
+                    },
+                    question: 'What is your rebid? (All 5 KC accounted for)',
+                    options: ['Pass', '5♠', '5NT (king ask)', '6♠'],
+                    correct: 2,
+                    explanation: 'Partner has 2 key cards without the queen (♥ shows 2 without Q♠). You have all 5 key cards accounted for. Bid 5NT to ask about kings to decide between 6♠ and 7♠.'
+                },
+                {
+                    auction: 'Hearts are trump - Partner bid 4NT - You respond 5♥ (2 without Q)',
+                    hand: {
+                        spades: 'A8',
+                        hearts: 'K10742',
+                        diamonds: 'K963',
+                        clubs: '72'
+                    },
+                    question: 'What does your 5♥ response show?',
+                    options: ['2 KC with Q♥', '2 KC without Q♥', '1 or 4 KC', '0 or 3 KC'],
+                    correct: 1,
+                    explanation: 'You have ♠A and ♥K = 2 key cards. You don\'t have Q♥. Bid 5♥ showing 2 key cards WITHOUT the queen of trump.'
+                },
+                {
+                    auction: 'Diamonds are trump - You bid 4NT - Partner bid 5♦ (0 or 3) - You bid 5NT (king ask)',
+                    hand: {
+                        spades: 'AK',
+                        hearts: 'A6',
+                        diamonds: 'AKQ1074',
+                        clubs: 'K83'
+                    },
+                    question: 'Partner bids 6♣. What does this show? (Agreement: bid lowest king)',
+                    options: ['0 kings', 'K♣ only', 'K♣, might have K♥/K♠', 'K♣ and K♥'],
+                    correct: 2,
+                    explanation: 'Using "lowest king" method, partner\'s 6♣ shows: "I have the K♣, I don\'t have any lower kings (there are none!), and I might have K♥ and/or K♠."'
+                }
+            ],
+            strengthShowing: [
+                {
+                    auction: 'You opened 1♥ - Partner responded 1♠',
+                    hand: {
+                        spades: 'K6',
+                        hearts: 'AQJ1074',
+                        diamonds: 'AK3',
+                        clubs: '82'
+                    },
+                    question: 'What is your rebid? (You have 17 HCP + 2 distribution = 19 points)',
+                    options: ['2♥', '3♥', '4♥', '2NT'],
+                    correct: 1,
+                    explanation: 'You have 17 HCP + 2 for the 6-card suit = 19 points (strong hand). Jump in your suit to show 16+ HCP. Bid 3♥ to show a strong hand with 6+ hearts.'
+                },
+                {
+                    auction: 'You opened 1♦ - Partner responded 1♠',
+                    hand: {
+                        spades: 'K103',
+                        hearts: 'AQ',
+                        diamonds: 'KQ1074',
+                        clubs: 'A85'
+                    },
+                    question: 'What is your rebid? (18 HCP)',
+                    options: ['2♦', '2NT', '3NT', '3♠'],
+                    correct: 1,
+                    explanation: 'You have 18 HCP (invitational hand). With a balanced 18-19 HCP, jump to 2NT after opening a minor. This shows your strength and balanced shape.'
+                },
+                {
+                    auction: 'You opened 1♣ - Partner responded 1♥',
+                    hand: {
+                        spades: 'AQ7',
+                        hearts: 'K1063',
+                        diamonds: 'K5',
+                        clubs: 'AQ82'
+                    },
+                    question: 'What is your rebid? (19 HCP)',
+                    options: ['2♥', '3♥', '4♥', '2NT'],
+                    correct: 2,
+                    explanation: 'You have 19 HCP (strong hand) and 4-card heart support. Jump to game (4♥) to show strong support. With 18+ HCP and 4-card support, jump directly to game.'
+                },
+                {
+                    auction: 'You opened 1♠ - Partner responded 2♣',
+                    hand: {
+                        spades: 'AKJ874',
+                        hearts: 'K6',
+                        diamonds: 'Q3',
+                        clubs: 'A105'
+                    },
+                    question: 'What is your rebid? (16 HCP + distribution)',
+                    options: ['2♠', '3♠', '4♠', '2NT'],
+                    correct: 1,
+                    explanation: 'You have 16 HCP + 2 for the 6-card suit = 18 points. Partner showed 10+ HCP with 2♣. Jump rebid your 6-card suit (3♠) to show 16+ HCP and extra length.'
+                },
+                {
+                    auction: 'You opened 1♥ - Partner responded 1NT',
+                    hand: {
+                        spades: 'K6',
+                        hearts: 'AQ10742',
+                        diamonds: 'AKJ',
+                        clubs: '85'
+                    },
+                    question: 'What is your rebid? (17 HCP + 2 = 19 points)',
+                    options: ['Pass', '2♥', '3♥', '4♥'],
+                    correct: 2,
+                    explanation: 'You have a strong hand (19 points). Partner has 6-10 HCP. Jump to 3♥ to show 16+ points and a 6-card suit, inviting game. Partner will bid 4♥ with maximum values.'
+                }
+            ],
+            strong2Club: [
+                {
+                    hand: { spades: 'AKQ7', hearts: 'AKJ104', diamonds: 'AQ', clubs: 'K6' },
+                    question: 'What should you open? (23 HCP)',
+                    options: ['1♥', '2♣', '2♥', '2NT'],
+                    correct: 1,
+                    explanation: 'You have 23 HCP with a 5-card heart suit. Open 2♣ (strong, artificial, forcing). This shows 22+ HCP or 9+ tricks with a long suit. You will show hearts next.'
+                },
+                {
+                    auction: 'Partner opened 2♣ (strong)',
+                    hand: { spades: '8652', hearts: '743', diamonds: '962', clubs: 'J104' },
+                    question: 'What is your response? (2 HCP)',
+                    options: ['Pass', '2♦', '2NT', '3NT'],
+                    correct: 1,
+                    explanation: 'Response to 2♣ is almost always 2♦. Even with 0 points, you MUST bid 2♦ ("waiting bid"). This lets opener describe their hand. Passing is not allowed!'
+                },
+                {
+                    auction: 'You opened 2♣ - Partner bid 2♦ - You bid 2♥',
+                    hand: { spades: 'Q84', hearts: 'K73', diamonds: 'A1062', clubs: 'Q95' },
+                    partnerHasShown: 'Hearts',
+                    question: 'What is your rebid as responder? (10 HCP)',
+                    options: ['Pass', '2NT', '3♥', '4♥'],
+                    correct: 2,
+                    explanation: 'Partner showed hearts after 2♣. You have 3-card support and 10 HCP. Raise to 3♥ to show support with 3+ cards. Partner will place the contract (likely 4♥ or explore slam).'
+                },
+                {
+                    auction: 'Partner opened 2♣ - You bid 2♦ - Partner bid 2NT',
+                    hand: { spades: 'J1074', hearts: '863', diamonds: 'K742', clubs: '95' },
+                    question: 'What is your rebid? (4 HCP)',
+                    options: ['Pass', '3NT', '3♣ (Stayman)', '3♦ (transfer)'],
+                    correct: 0,
+                    explanation: 'Partner\'s 2NT rebid shows 22-24 HCP with a flat hand. You have only 4 HCP. Pass - you don\'t have enough for game even with partner\'s strong hand.'
+                },
+                {
+                    auction: 'You opened 2♣ - Partner bid 2♦ - You bid 2♠',
+                    hand: { spades: 'K1063', hearts: 'AQ7', diamonds: 'K8', clubs: 'QJ42' },
+                    question: 'What is your rebid as responder? (12 HCP)',
+                    options: ['3♠', '4♠', '3NT', '2NT'],
+                    correct: 1,
+                    explanation: 'Partner showed spades after 2♣. You have 4-card support and 12 HCP. With game-forcing values and a fit, jump to 4♠. No need to go slow - you have the points for game.'
+                }
+            ],
+            partnershipStrength: [
+                {
+                    auction: 'You: 14 HCP - Partner shows: Minimum (6-10 HCP)',
+                    question: 'Combined: 20-24 points. Where should you play?',
+                    options: ['Part Score', 'Maybe Game', 'Game', 'Maybe Slam'],
+                    correct: 1,
+                    explanation: 'With 20-24 combined points, you\'re in the "maybe game" zone. You need 25-26 for game. Make an invitational bid and let partner decide based on whether they have 6-7 (pass) or 9-10 (bid game).'
+                },
+                {
+                    auction: 'You: 16 HCP - Partner shows: Invitational (11-12 HCP)',
+                    question: 'Combined: 27-28 points. Where should you play?',
+                    options: ['Part Score', 'Game', 'Maybe Slam', 'Slam'],
+                    correct: 1,
+                    explanation: 'With 27-28 combined points, you have enough for game (need 25-26). Bid game in your best suit or NT. You\'re not quite at slam level yet (need 33+).'
+                },
+                {
+                    auction: 'You: 18 HCP - Partner shows: Strong (13+ HCP)',
+                    question: 'Combined: 31+ points. Where should you play?',
+                    options: ['Game', 'Maybe Slam', 'Slam', 'Grand Slam'],
+                    correct: 1,
+                    explanation: 'With 31+ combined points, you\'re in slam territory. Start exploring for slam. Use RKC (4NT) to check for key cards. Small slam needs 33+ points.'
+                },
+                {
+                    auction: 'You open 1♥ - Partner jumps to 3♥ (limit raise)',
+                    hand: {
+                        spades: 'K6',
+                        hearts: 'AQJ1074',
+                        diamonds: 'AK3',
+                        clubs: '82'
+                    },
+                    question: 'You have 17 HCP. Partner has 10-12. What should you bid?',
+                    options: ['Pass', '4♥', '4NT (RKC)', '3NT'],
+                    correct: 1,
+                    explanation: 'You have 17 HCP, partner has 10-12 = 27-29 combined. That\'s enough for game but not slam. Bid 4♥ to play game in your major suit fit.'
+                },
+                {
+                    question: 'How many combined points do you need for game in a major?',
+                    options: ['23', '25-26', '28-29', '33'],
+                    correct: 1,
+                    explanation: 'You need 25-26 combined points for game in a major (4♥ or 4♠) or in 3NT. For a minor suit game (5♣ or 5♦), you need 28-29 points.'
+                }
+            ],
+            slamBidding: [
+                {
+                    question: 'How many combined points do you need for a small slam (6-level)?',
+                    options: ['29 points', '31 points', '33 points', '37 points'],
+                    correct: 2,
+                    explanation: 'You need 33 combined points to bid and make a small slam (6-level). With 37+ points, consider a grand slam (7-level).'
+                },
+                {
+                    question: 'What are the two main requirements for bidding slam?',
+                    options: ['HCP and trump length', 'Controls and overall strength', 'Distribution and honors', 'Aces and queens'],
+                    correct: 1,
+                    explanation: 'To bid slam you need: (1) Enough overall strength (33+ for small slam, 37+ for grand slam), and (2) Enough controls (aces, kings, singletons, voids) to prevent opponents from cashing quick tricks.'
+                },
+                {
+                    question: 'What is "first-round control"?',
+                    options: ['Ace or void', 'King or singleton', 'Queen or doubleton', 'Any honor'],
+                    correct: 0,
+                    explanation: 'First-round control means you can win the first trick in a suit. This requires either an Ace or a Void in at least three of the four suits to bid slam.'
+                },
+                {
+                    question: 'What is "second-round control"?',
+                    options: ['Ace', 'King, KQ, or singleton', 'Queen or doubleton', 'Jack'],
+                    correct: 1,
+                    explanation: 'Second-round control means you can prevent opponents from cashing two quick tricks. This requires a King, KQ combination, or a singleton in every suit.'
+                },
+                {
+                    auction: 'You and partner have 34 combined points with an 8-card spade fit',
+                    question: 'Should you bid slam?',
+                    options: ['No - not enough points', 'Yes - always bid slam with 33+', 'Maybe - check for controls first', 'Only if partner has extras'],
+                    correct: 2,
+                    explanation: 'With 34 points you have enough strength, but you still need to check controls. Use Blackwood (4NT), Gerber (4♣), or cue bidding to ensure you have enough aces and kings.'
+                },
+                {
+                    question: 'What helps you make slam with fewer than 33 points?',
+                    options: ['More queens and jacks', 'Extra trumps and long side suits', 'Balanced hands', 'More high cards in one suit'],
+                    correct: 1,
+                    explanation: 'You can make slam with fewer points if you have: extra trumps (8+ card fit helps), long strong side suits (small cards become valuable), or short suits (voids, singletons, doubletons provide extra tricks).'
+                }
+            ],
+            blackwoodGerber: [
+                {
+                    auction: 'Spades are trump - You bid 4NT (Blackwood)',
+                    hand: { spades: 'AQ1074', hearts: 'K6', diamonds: 'AKJ4', clubs: 'Q3' },
+                    question: 'Partner responds 5♣. What does this mean?',
+                    options: ['0 or 4 aces', '1 or 4 aces', '2 aces', '3 aces'],
+                    correct: 0,
+                    explanation: 'In traditional Blackwood: 5♣ = 0 or 4 aces, 5♦ = 1 ace, 5♥ = 2 aces, 5♠ = 3 aces. Partner has either no aces or all four aces.'
+                },
+                {
+                    auction: 'Partner opened 1NT - You bid 4♣ (Gerber)',
+                    question: 'What does 4♣ directly over 1NT ask for?',
+                    options: ['Aces', 'Kings', 'Controls', 'Trump quality'],
+                    correct: 0,
+                    explanation: 'Gerber (4♣) asks for aces after a 1NT or 2NT opening. Responses: 4♦ = 0 or 4 aces, 4♥ = 1 ace, 4♠ = 2 aces, 4NT = 3 aces. Use Gerber when Blackwood would be too high.'
+                },
+                {
+                    auction: 'You bid 4NT (Blackwood) - Partner bid 5♥ (2 aces)',
+                    hand: { spades: 'AKQ1074', hearts: 'A6', diamonds: 'KQ3', clubs: 'A5' },
+                    question: 'You have 3 aces. What should you bid?',
+                    options: ['5♠', '5NT (asking for kings)', '6♠', '7♠'],
+                    correct: 1,
+                    explanation: 'You have all 4 aces accounted for (you have 3, partner has 2 but one must be the same). With all aces, bid 5NT to ask for kings to decide between 6♠ and 7♠.'
+                },
+                {
+                    auction: 'Partner opened 2NT - You want to check for aces',
+                    hand: { spades: 'KQ10742', hearts: '83', diamonds: 'AK6', clubs: 'Q5' },
+                    question: 'What should you bid?',
+                    options: ['4NT (Blackwood)', '4♣ (Gerber)', '5NT', '6♠'],
+                    correct: 1,
+                    explanation: 'After a notrump opening (1NT or 2NT), use 4♣ Gerber to ask for aces. This keeps you lower than 4NT Blackwood would. Partner responds at the 4-level: 4♦/♥/♠/NT showing 0-3 aces.'
+                },
+                {
+                    auction: 'You bid 4NT - Partner bid 5♦ (1 ace) - You bid 5NT - Partner bid 6♦',
+                    question: 'Partner\'s 6♦ response to your 5NT king ask shows what?',
+                    options: ['0 kings', '1 king - the K♦', 'K♦ and might have K♥/K♠', '2 kings'],
+                    correct: 2,
+                    explanation: 'After 5NT asks for kings, partner bids their lowest king. 6♦ = "I have K♦, I don\'t have K♣ (lower), and I might have K♥ and/or K♠." If using "number of kings" method: 6♣=0, 6♦=1, 6♥=2, 6♠=3.'
+                },
+                {
+                    question: 'When should you NOT use Blackwood or Gerber?',
+                    options: ['When you have 33+ points', 'When you have a void', 'When you have all aces', 'When partner opened'],
+                    correct: 1,
+                    explanation: 'DON\'T use Blackwood or Gerber if you have a void - the ace in your void suit is worthless but partner will count it. Also avoid if you have a worthless doubleton (Qx, Jx) in an unbid suit. Use cue bidding instead.'
+                }
+            ],
+            cueBidding: [
+                {
+                    auction: 'You opened 1♠ - Partner bid 3♠ (limit raise)',
+                    hand: { spades: 'AK874', hearts: 'void', diamonds: 'Q43', clubs: 'AKJ103' },
+                    question: 'You want to explore slam. What should you bid?',
+                    options: ['4NT (Blackwood)', '4♣ (cue bid)', '4♥ (cue bid void)', '6♠'],
+                    correct: 1,
+                    explanation: 'Start cue bidding by showing your cheapest first-round control (ace or void). Bid 4♣ to show the club ace. This starts a conversation about controls. You\'ll show the heart void later if needed.'
+                },
+                {
+                    auction: '1♠ - 3♠ - 4♣ (cue) - 4♦ (cue)',
+                    hand: { spades: 'AK874', hearts: 'void', diamonds: 'Q43', clubs: 'AKJ103' },
+                    question: 'Partner cue bid 4♦. What should you bid now?',
+                    options: ['4♥ (cue void)', '4♠ (sign off)', '4NT', '5♣'],
+                    correct: 0,
+                    explanation: 'Continue cue bidding your cheapest first-round control. Bid 4♥ to show your void (or ace if you had one). Partner can now cue bid 4♠ if interested, or sign off.'
+                },
+                {
+                    question: 'In cue bidding, when do you bid the cheapest suit?',
+                    options: ['When it\'s your longest suit', 'When you have first-round control', 'When you have the ace', 'When partner asked'],
+                    correct: 1,
+                    explanation: 'Always cue bid your cheapest first-round control (ace or void). This saves bidding room. You can also cue bid second-round controls (kings, singletons) after showing aces.'
+                },
+                {
+                    auction: '1♥ - 3♥ - 4♣ - 4♦ - 4♠',
+                    question: 'Opener bid 4♠ after partner cue bid 4♦. What does this mean?',
+                    options: ['Spade ace only', 'Spade ace, no diamond ace', 'Spade ace and diamond ace', 'Changing suits'],
+                    correct: 2,
+                    explanation: 'By skipping 4♥ (trump suit) to bid 4♠, opener shows the spade ace AND confirms the diamond ace (since they supported partner\'s 4♦ cue bid). Bidding a new suit always shows that ace.'
+                },
+                {
+                    auction: 'You: 1♠ - Partner: 3♠ - You: 4♣ - Partner: 4♠',
+                    question: 'Partner signed off in 4♠. What does this mean?',
+                    options: ['Partner has no controls', 'Partner has minimum with no ace to cue', 'Partner wants to play 4♠', 'Partner is showing the spade ace'],
+                    correct: 1,
+                    explanation: 'When partner returns to the trump suit after you cue bid, they\'re signing off. They have a minimum limit raise without a first-round control to show. You can still bid slam if you have enough.'
+                },
+                {
+                    question: 'What is the main advantage of cue bidding over Blackwood?',
+                    options: ['It\'s easier to use', 'It shows specific aces', 'It\'s always better', 'Partner responds lower'],
+                    correct: 1,
+                    explanation: 'Cue bidding shows WHICH aces and controls you have, not just how many. This is crucial when you have a void (worthless ace) or need to know if partner has control of a specific suit.'
+                }
+            ],
+            finesse: [
+                {
+                    question: 'What is a finesse in bridge?',
+                    options: ['Playing your highest card', 'Trying to win a trick with a lower honor by playing it before the opponent\'s higher honor', 'Trumping a trick', 'Leading a suit to dummy'],
+                    correct: 1,
+                    explanation: 'A finesse is a technique where you try to win a trick with a lower honor card (like a Queen or Jack) by playing it when you think the higher honor (King or Ace) is in a specific opponent\'s hand.'
+                },
+                {
+                    situation: 'Dummy has: AQ3  |  You have: 654',
+                    question: 'How do you finesse for the King?',
+                    options: ['Lead Ace from dummy', 'Lead small from your hand toward the AQ', 'Lead Queen from dummy', 'Lead small from dummy'],
+                    correct: 1,
+                    explanation: 'Lead a small card from your hand toward dummy\'s AQ. If LHO plays low, play the Queen. If the King is with LHO (behind the AQ), your Queen will win. If RHO has the King, they\'ll win but you still have the Ace.'
+                },
+                {
+                    situation: 'Dummy has: K54  |  You have: A103',
+                    question: 'How do you try to win a trick with the King?',
+                    options: ['Play King from dummy first', 'Lead small from dummy toward your Ace', 'Lead small from your hand toward dummy\'s King', 'Play Ace then King'],
+                    correct: 2,
+                    explanation: 'Lead small from your hand toward dummy\'s King. If LHO has the Ace and plays low, your King wins! If RHO has the Ace, they\'ll take it, but you were going to lose to the Ace anyway.'
+                },
+                {
+                    situation: 'Dummy: KJ3  |  You: A54',
+                    question: 'This is a "double finesse" - how do you play it?',
+                    options: ['Play Ace first', 'Lead small to the Jack', 'Lead small to the King', 'Play King then Jack'],
+                    correct: 1,
+                    explanation: 'Lead small from your hand to dummy\'s Jack first. If it wins, great! If it loses to the Queen, come back and lead toward the King next time. You\'re hoping RHO has Queen and/or Ten. This gives you two chances to win extra tricks.'
+                },
+                {
+                    question: 'When should you finesse?',
+                    options: ['Always', 'Never', 'When you need extra tricks and suspect the missing honor is in a specific position', 'Only in trump suits'],
+                    correct: 2,
+                    explanation: 'Finesse when you need extra tricks and you think a missing honor (like the King or Queen) is with a specific opponent. The finesse only works if the honor is "on your left" when you lead toward your lower honors.'
+                },
+                {
+                    situation: 'You need 4 tricks from: Dummy AQ10  |  You 543',
+                    question: 'What\'s your best play?',
+                    options: ['Play the Ace', 'Finesse the Queen', 'Finesse the 10', 'Play small from both hands'],
+                    correct: 2,
+                    explanation: 'Lead small to the 10! This "deep finesse" works if LHO has both the King and Jack. If the 10 wins, repeat the finesse toward the Queen. This is your best chance for multiple tricks when you need them.'
+                }
+            ],
+            declarerPlay: [
+                {
+                    question: 'What should you do FIRST when dummy comes down?',
+                    options: ['Play to the first trick quickly', 'Count your winners', 'Look at trump', 'Think about the opening lead'],
+                    correct: 1,
+                    explanation: 'STOP and count your winners! For most suit contracts: (1) Count losers, (2) Count winners, (3) Make a plan. For NT: Count winners and potential winners. Don\'t play to the first trick too quickly - take your time to plan.'
+                },
+                {
+                    contractType: 'Suit Contract',
+                    question: 'What is the general plan for playing most suit contracts?',
+                    options: ['Draw trump immediately', 'Count losers -> Identify winners -> Trump losers -> Lead longest side suit -> Cash honors in short suits', 'Play all your aces first', 'Lead trump last'],
+                    correct: 1,
+                    explanation: 'The standard plan: (1) Count losers and decide how to handle them, (2) Double-check winners, (3) Trump your losers in the short-trump hand (usually dummy) BEFORE drawing trump, (4) Pull trump, (5) Lead your longest side suit, (6) Cash honors in short suits last.'
+                },
+                {
+                    contractType: 'No Trump Contract',
+                    question: 'What is the general plan for no trump contracts?',
+                    options: ['Count losers first', 'Count winners -> Lead longest suit -> Stick with one suit -> Cash honors last', 'Cash all aces immediately', 'Avoid giving up tricks'],
+                    correct: 1,
+                    explanation: 'For NT: (1) Count winners and potential winners, (2) Lead your longest side suit first (usually), (3) Give up losers early, (4) Stick with one suit at a time - establish your tricks, THEN cash them, (5) Cash honors in short suits last.'
+                },
+                {
+                    question: 'When should you pull trumps (draw trump)?',
+                    options: ['Immediately, always', 'After trumping your losers in dummy', 'Never', 'Only if opponents led trump'],
+                    correct: 1,
+                    explanation: 'Pull trumps AFTER you\'ve used dummy\'s trumps to ruff your losers. If you draw trump first, you won\'t have any trumps left in dummy to ruff with! The general rule: Ruff losers first, THEN draw trump.'
+                },
+                {
+                    question: 'What does "concentrating on the opening lead" tell you?',
+                    options: ['Nothing useful', 'What suit to avoid', 'Information about leader\'s length/strength in that suit', 'Which card to play'],
+                    correct: 2,
+                    explanation: 'The opening lead gives clues about the leader\'s hand - their length and strength in that suit. Study it for a few seconds to remember it. Use this info plus the bidding to build a mental picture of where the cards are.'
+                },
+                {
+                    question: 'In suit contracts, when is it best to give up tricks?',
+                    options: ['Never give up tricks', 'Before leading trump', 'After pulling all trumps', 'Only when forced'],
+                    correct: 1,
+                    explanation: 'Give up your losers BEFORE pulling trump (when possible). This sets up your trumping position. If you pull trump first, opponents might then cash their winners in your weak suits.'
+                }
+            ],
+            defensiveSignals: [
+                {
+                    question: 'What are "defensive signals" in bridge?',
+                    options: ['Verbal communication', 'The cards you play to help partner understand your hand', 'Facial expressions', 'Bidding conventions'],
+                    correct: 1,
+                    explanation: 'Defensive signals are the cards you play (high or low) to communicate with partner about your hand. Since you can\'t talk during play, you signal legally through your card choices.'
+                },
+                {
+                    question: 'What does playing a HIGH card in a suit mean?',
+                    options: ['You want partner to lead that suit', 'You don\'t like that suit', 'You have an even number of cards', 'You\'re out of the suit'],
+                    correct: 0,
+                    explanation: 'When discarding or following suit, play HIGH (like the 8 from AQ872) to show you WANT partner to lead that suit. This is called "attitude signaling" - you\'re showing interest and encouraging partner.'
+                },
+                {
+                    question: 'What does playing a LOW card in a suit mean?',
+                    options: ['You want that suit', 'You have no interest in that suit', 'You have a singleton', 'You have the ace'],
+                    correct: 1,
+                    explanation: 'Playing LOW (like the 4 from 954) shows you have NO INTEREST in that suit - you want partner to lead something else. It\'s a discouraging signal.'
+                },
+                {
+                    question: 'What is "count signaling" and when do you use it?',
+                    options: ['Counting your points', 'Showing how many cards you have in a suit', 'Counting tricks', 'Adding up scores'],
+                    correct: 1,
+                    explanation: 'Count signals tell partner how many cards you hold in a suit. Play HIGH-LOW (high then low card) to show an EVEN number of cards. Play LOW-HIGH (low then high) to show an ODD number of cards. This helps partner figure out declarer\'s distribution.'
+                },
+                {
+                    situation: 'You have: AQ872 in spades. Partner leads ♠3.',
+                    question: 'Which card should you discard or follow with to encourage spades?',
+                    options: ['2', '7 or 8', 'A', 'Q'],
+                    correct: 1,
+                    explanation: 'Play the 8 (or 7) - the HIGHEST card you can afford. This tells partner "I like this suit, I have strength here, please continue leading spades." Don\'t waste your Ace or Queen when a high spot card sends the same message.'
+                },
+                {
+                    question: 'When should you "think ahead" as a defender?',
+                    options: ['Never, just react', 'Before declarer leads from dummy', 'Only on the opening lead', 'Every trick'],
+                    correct: 1,
+                    explanation: 'Always think ahead and be ready for critical plays! Hesitation often tells declarer what you hold. Decide in advance which card you\'ll play when declarer leads a suit toward or from dummy. This prevents giving away information through timing.'
+                }
+            ]
+        };
+
+        let currentQuiz = null;
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let selectedOption = null;
+
+        function startQuiz(topic) {
+            currentQuiz = quizData[topic];
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            selectedOption = null;
+
+            document.getElementById('menuContainer').style.display = 'none';
+            document.getElementById('quizContainer').classList.add('active');
+            document.getElementById('finalScore').style.display = 'none';
+
+            showQuestion();
+        }
+
+        
+        function colorizeSuits(text) {
+            if (!text) return text;
+            // Replace suit symbols with colored versions
+            text = text.replace(/♠/g, '<span style="color: #000;">♠</span>');
+            text = text.replace(/♥/g, '<span style="color: #d32f2f;">♥</span>');
+            text = text.replace(/♦/g, '<span style="color: #d32f2f;">♦</span>');
+            text = text.replace(/♣/g, '<span style="color: #000;">♣</span>');
+            return text;
+        }
+
+        function showQuestion() {
+            const question = currentQuiz[currentQuestion];
+            const progress = document.getElementById('progress');
+            const content = document.getElementById('quizContent');
+
+            progress.innerHTML = `Question ${currentQuestion + 1} of ${currentQuiz.length}`;
+
+            let html = '';
+
+            // Show partner\'s bid if exists
+            if (question.partnerBid) {
+                html += `<div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                    <strong>Auction:</strong> Partner opened ${question.partnerBid}
+                </div>`;
+            }
+
+            if (question.auction) {
+                html += `<div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                    <strong>Auction:</strong> ${question.auction}
+                </div>`;
+            }
+
+            if (question.partnerRebid) {
+                html += `<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2196f3;">
+                    <strong>Partner\'s Rebid:</strong> ${question.partnerRebid}
+                </div>`;
+            }
+
+            // Show hand
+            if (question.hand) {
+                html += '<div class="hand-display">';
+                html += '<div style="font-weight: bold; margin-bottom: 10px;">Your Hand:</div>';
+                if (question.hand.spades) {
+                    html += `<div class="suit-line"><span class="suit-symbol spades">♠</span>${question.hand.spades}</div>`;
+                }
+                if (question.hand.hearts) {
+                    html += `<div class="suit-line"><span class="suit-symbol hearts">♥</span>${question.hand.hearts}</div>`;
+                }
+                if (question.hand.diamonds) {
+                    html += `<div class="suit-line"><span class="suit-symbol diamonds">♦</span>${question.hand.diamonds}</div>`;
+                }
+                if (question.hand.clubs) {
+                    html += `<div class="suit-line"><span class="suit-symbol clubs">♣</span>${question.hand.clubs}</div>`;
+                }
+                html += '</div>';
+            }
+
+            html += `<div class="question">${question.question}</div>`;
+
+            html += '<div class="options">';
+            question.options.forEach((option, index) => {
+                html += `<button class="option-button" onclick="selectOption(${index})">${option}</button>`;
+            });
+            html += '</div>';
+
+            html += `<div class="explanation" id="explanation">
+                <h3>Explanation</h3>
+                <p>${question.explanation}</p>
+            </div>`;
+
+            content.innerHTML = html;
+
+            document.getElementById('submitBtn').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextBtn').style.display = 'none';
+            answered = false;
+            selectedOption = null;
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+
+            selectedOption = index;
+            const buttons = document.querySelectorAll('.option-button');
+            buttons.forEach((btn, i) => {
+                btn.classList.remove('selected');
+                if (i === index) {
+                    btn.classList.add('selected');
+                }
+            });
+
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            if (answered || selectedOption === null) return;
+
+            answered = true;
+            const question = currentQuiz[currentQuestion];
+            const buttons = document.querySelectorAll('.option-button');
+
+            buttons.forEach((btn, i) => {
+                btn.onclick = null;
+                if (i === question.correct) {
+                    btn.classList.add('correct');
+                } else if (i === selectedOption) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (selectedOption === question.correct) {
+                score++;
+            }
+
+            document.getElementById('explanation').classList.add('show');
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < currentQuiz.length) {
+                showQuestion();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function showFinalScore() {
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('progress').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+
+            const finalScore = document.getElementById('finalScore');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const trophyDisplay = document.getElementById('trophyDisplay');
+            const bridgePhrase = document.getElementById('bridgePhrase');
+
+            const percentage = Math.round((score / currentQuiz.length) * 100);
+            let message = '';
+            let className = '';
+            let trophy = '';
+            let phrase = '';
+
+            const bridgePhrases = {
+                excellent: [
+                    "A finesse a day keeps the overtricks in play!",
+                    "Well bid and well played!",
+                    "You\'re playing like a seasoned pro!",
+                    "That\'s a grand slam performance!",
+                    "You\'ve got the right stuff for the club championship!"
+                ],
+                good: [
+                    "Rome wasn\'t built in a day, and neither is a bridge expert!",
+                    "Every expert was once a beginner!",
+                    "You\'re on the right track to making game!",
+                    "Practice makes part-score into game!",
+                    "Keep your eye on the dummy and your mind on the cards!"
+                ],
+                needsWork: [
+                    "Even the best players started with zero tricks!",
+                    "Every hand is a learning opportunity!",
+                    "The secret to bridge? More practice!",
+                    "Keep shuffling, keep dealing, keep learning!",
+                    "Every master was once a disaster - keep going!"
+                ]
+            };
+
+            if (percentage >= 90) {
+                message = '🎉 Grand Slam! Outstanding!';
+                className = 'good';
+                trophy = '🏆';
+                phrase = bridgePhrases.excellent[Math.floor(Math.random() * bridgePhrases.excellent.length)];
+            } else if (percentage >= 80) {
+                message = '⭐ Small Slam! Excellent work!';
+                className = 'good';
+                trophy = '🥇';
+                phrase = bridgePhrases.excellent[Math.floor(Math.random() * bridgePhrases.excellent.length)];
+            } else if (percentage >= 70) {
+                message = '♠ Game Bid! Well done!';
+                className = 'ok';
+                trophy = '🥈';
+                phrase = bridgePhrases.good[Math.floor(Math.random() * bridgePhrases.good.length)];
+            } else if (percentage >= 60) {
+                message = '♣ Part Score! Keep going!';
+                className = 'ok';
+                trophy = '🥉';
+                phrase = bridgePhrases.good[Math.floor(Math.random() * bridgePhrases.good.length)];
+            } else {
+                message = '📚 Back to the books!';
+                className = 'needs-practice';
+                trophy = '📚';
+                phrase = bridgePhrases.needsWork[Math.floor(Math.random() * bridgePhrases.needsWork.length)];
+            }
+
+            trophyDisplay.textContent = trophy;
+            scoreDisplay.className = `score ${className}`;
+            scoreDisplay.innerHTML = `
+                <div style="font-size: 2em; margin-bottom: 10px;">${score} / ${currentQuiz.length}</div>
+                <div style="font-size: 1.2em; margin-bottom: 10px;">${percentage}%</div>
+                <div>${message}</div>
+            `;
+            bridgePhrase.textContent = phrase;
+
+            finalScore.style.display = 'block';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            selectedOption = null;
+
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('progress').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            document.getElementById('finalScore').style.display = 'none';
+
+            showQuestion();
+        }
+
+        function backToMenu() {
+            document.getElementById('menuContainer').style.display = 'block';
+            document.getElementById('quizContainer').classList.remove("active");
+            currentQuiz = null;
+        }
+    </script>
+</body>
+</html>
