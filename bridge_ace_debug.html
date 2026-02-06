@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge Ace - Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            font-size: 18px;
+            background: #2d7a5f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .test-btn:active {
+            background: #1f5a42;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bridge Ace Debug Test</h1>
+    <p>This tests if JavaScript is working on your device:</p>
+    
+    <button class="test-btn" onclick="test1()">Test 1: Simple Alert</button>
+    <button class="test-btn" onclick="test2()">Test 2: Change Text</button>
+    <button class="test-btn" onclick="test3()">Test 3: Console Log</button>
+    
+    <div id="output">Click a button above...</div>
+    
+    <script>
+        // Test if script is loading
+        console.log("Script loaded successfully!");
+        
+        function test1() {
+            alert("✅ JavaScript is working!");
+        }
+        
+        function test2() {
+            document.getElementById('output').innerHTML = '<strong style="color: green; font-size: 24px;">✅ JavaScript is working!</strong><br>Buttons should work in the main app too.';
+        }
+        
+        function test3() {
+            console.log("Test 3 clicked!");
+            document.getElementById('output').innerHTML = '<strong>Check your browser console (if available)</strong><br>Look for: "Test 3 clicked!"';
+        }
+        
+        // Auto-test on load
+        window.onload = function() {
+            console.log("Page loaded!");
+            document.getElementById('output').innerHTML = '✅ Page loaded successfully<br>JavaScript is running<br><br>Now click a button above...';
+        };
+    </script>
+</body>
+</html>
